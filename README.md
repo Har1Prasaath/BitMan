@@ -10,9 +10,6 @@ Select text that includes a multiple-choice quiz question + options. A floating 
 - Sanitizes responses to one of the provided options
 - Popup & Options pages to store API keys and model names (stored in `chrome.storage.sync`)
 
-## IMPORTANT: Add Your Own API Keys
-For security, do NOT hardcode keys in code. Use the popup or options page. Keys never leave your browser except to call provider APIs.
-
 ## Installation (Developer Mode)
 1. `git clone` (or copy) this folder.
 2. Open Chrome > Extensions > Enable Developer Mode.
