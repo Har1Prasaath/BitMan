@@ -1,0 +1,13 @@
+#bitman-fab{position:absolute;z-index:2147483647;background:#111;color:#fff;border-radius:20px;padding:4px 6px;font-size:14px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.3);align-items:center;justify-content:center;font-family:system-ui;}
+#bitman-fab:hover{background:#2563eb;}
+#bitman-panel{position:fixed;top:20px;right:20px;width:320px;background:#1e293b;color:#f1f5f9;font-family:system-ui;border:1px solid #334155;border-radius:10px;box-shadow:0 6px 24px -4px rgba(0,0,0,.5);z-index:2147483647;display:flex;flex-direction:column;overflow:hidden;}
+#bitman-panel .bitman-header{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:#0f172a;font-weight:600;font-size:14px;}
+#bitman-panel .bitman-header button{background:transparent;border:none;color:#f1f5f9;font-size:16px;cursor:pointer;}
+#bitman-panel textarea{width:100%;background:#0f172a;color:#f1f5f9;border:1px solid #334155;border-radius:6px;padding:6px;font-size:12px;resize:vertical;}
+#bitman-panel .bitman-actions{display:flex;gap:8px;padding:8px 10px;align-items:center;}
+#bitman-panel .bitman-actions button{background:#2563eb;border:none;color:#fff;padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer;}
+#bitman-panel .bitman-actions button:hover{background:#1d4ed8;}
+#bitman-panel .bitman-actions a{color:#93c5fd;font-size:12px;cursor:pointer;text-decoration:underline;}
+#bitman-panel .bitman-results{display:flex;flex-direction:column;gap:6px;padding:4px 10px 10px 10px;font-size:12px;}
+#bitman-panel .model-answer{background:#0f172a;border:1px solid #334155;padding:6px;border-radius:6px;}
+#bitman-panel .bitman-footer{font-size:10px;padding:6px 10px;color:#94a3b8;background:#0f172a;border-top:1px solid #334155;}

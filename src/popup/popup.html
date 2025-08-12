@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>BitMan</title>
+<link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <h1>BitMan</h1>
+  <div class="field">
+    <label>OpenAI API Key</label>
+    <input id="openaiKey" type="password" placeholder="sk-..." />
+  </div>
+  <div class="field">
+    <label>OpenAI Model</label>
+    <input id="modelOpenAI" placeholder="gpt-4o-mini" />
+  </div>
+  <div class="field">
+    <label>Gemini API Key</label>
+    <input id="geminiKey" type="password" placeholder="AIza..." />
+  </div>
+  <div class="field">
+    <label>Gemini Model</label>
+    <input id="modelGemini" placeholder="gemini-1.5-flash" />
+  </div>
+  <button id="save">Save</button>
+  <p class="note">Keys are stored locally via chrome.storage.sync.</p>
+  <script src="popup.js"></script>
+</body>
+</html>

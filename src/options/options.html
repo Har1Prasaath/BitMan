@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>BitMan Settings</title>
+<link rel="stylesheet" href="options.css" />
+</head>
+<body>
+  <h1>BitMan Settings</h1>
+  <form id="settings-form">
+    <div class="field"><label>OpenAI API Key</label><input id="openaiKey" type="password" placeholder="sk-..." /></div>
+    <div class="field"><label>OpenAI Model</label><input id="modelOpenAI" placeholder="gpt-4o-mini" /></div>
+    <div class="field"><label>Gemini API Key</label><input id="geminiKey" type="password" placeholder="AIza..." /></div>
+    <div class="field"><label>Gemini Model</label><input id="modelGemini" placeholder="gemini-1.5-flash" /></div>
+    <div class="field"><label>Parse Strategy</label>
+      <select id="parseStrategy">
+        <option value="auto">Auto (A-D / 1-4)</option>
+        <option value="letters">Letters Only (A-D)</option>
+        <option value="numbers">Numbers Only (1-4)</option>
+      </select>
+    </div>
+    <button type="submit">Save</button>
+    <span id="status"></span>
+  </form>
+  <section class="help">
+    <h2>How it works</h2>
+    <ol>
+      <li>Select a question and its options on any webpage.</li>
+      <li>Click the 🤖 button that appears.</li>
+      <li>Edit the question if needed and click Ask.</li>
+      <li>BitMan queries the models and restricts answers to detected options.</li>
+    </ol>
+  </section>
+  <script src="options.js"></script>
+</body>
+</html>

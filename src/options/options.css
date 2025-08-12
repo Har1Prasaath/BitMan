@@ -1,0 +1,10 @@
+body{font-family:system-ui;margin:20px;background:#0f172a;color:#f1f5f9;}
+h1{margin-top:0;}
+form{max-width:480px;}
+.field{display:flex;flex-direction:column;margin-bottom:14px;}
+label{font-size:12px;margin-bottom:4px;color:#cbd5e1;}
+input,select{background:#1e293b;border:1px solid #334155;color:#f1f5f9;border-radius:6px;padding:8px;font-size:13px;}
+button{background:#2563eb;border:none;color:#fff;padding:10px 18px;border-radius:6px;cursor:pointer;font-size:13px;}
+button:hover{background:#1d4ed8;}
+#status{margin-left:12px;font-size:12px;}
+ol{font-size:13px;line-height:1.4;}
