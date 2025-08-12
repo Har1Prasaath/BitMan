@@ -24,8 +24,6 @@ Select text that includes a multiple-choice quiz question + options. A floating 
 ## Future Enhancements
 - Add caching of previous questions
 - Option to show reasoning (toggle) while still constraining final answer
-- Support more providers (Claude, Mistral)
+- Support more providers (Claude, Grok)
 - Smarter option parsing (roman numerals, bullet symbols)
 
-## License
-MIT (add a `LICENSE` file if distributing)
