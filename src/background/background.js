@@ -27,11 +27,13 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 async function handleAsk(payload) {
   const { question, rawSelection } = payload;
   const options = extractOptions(rawSelection) || [];
-  const { openaiKey, geminiKey, modelOpenAI, modelGemini } = await chrome.storage.sync.get({
+  const { openaiKey, geminiKey, modelOpenAI, modelGemini, openaiOrg, openaiProject } = await chrome.storage.sync.get({
     openaiKey: '',
     geminiKey: '',
     modelOpenAI: 'gpt-4o-mini',
-    modelGemini: 'gemini-1.5-flash'
+    modelGemini: 'gemini-1.5-flash',
+    openaiOrg: '',
+    openaiProject: ''
   });
 
   if (!openaiKey && !geminiKey) {
@@ -41,20 +43,51 @@ async function handleAsk(payload) {
   const prompt = buildPrompt(question, options);
 
   const [openaiAnswer, geminiAnswer] = await Promise.all([
-    openaiKey ? askOpenAI(openaiKey, modelOpenAI, prompt, options) : null,
+    openaiKey ? askOpenAI(openaiKey, modelOpenAI, prompt, options, { org: openaiOrg, project: openaiProject }) : null,
     geminiKey ? askGemini(geminiKey, modelGemini, prompt, options) : null
   ]);
 
   return { openaiAnswer, geminiAnswer, options };
 }
 
-async function askOpenAI(key, model, prompt, options) {
+async function askOpenAI(key, model, prompt, options, { org, project } = {}) {
+  try {
+  // First try chat.completions with requested model
+  const primary = await callOpenAIChat(key, model, prompt, { org, project });
+    if (primary.ok) {
+      return sanitizeToOptions(primary.content, options);
+    }
+
+    // If model not found or 400/404, try fallbacks
+    const fallbacks = [];
+    if (model !== 'gpt-4o-mini') fallbacks.push('gpt-4o-mini');
+    if (model !== 'gpt-4o') fallbacks.push('gpt-4o');
+    for (const fm of fallbacks) {
+      const res = await callOpenAIChat(key, fm, prompt, { org, project });
+      if (res.ok) return sanitizeToOptions(res.content, options);
+    }
+
+    // As a last resort, try the Responses API with the originally requested model
+  const viaResponses = await callOpenAIResponses(key, model, prompt, { org, project });
+    if (viaResponses.ok) return sanitizeToOptions(viaResponses.content, options);
+
+    // Bubble the most informative error we have
+    const errMsg = viaResponses.error || primary.error || 'Unknown error';
+    throw new Error(errMsg);
+  } catch (e) {
+    return 'Error: ' + e.message;
+  }
+}
+
+async function callOpenAIChat(key, model, prompt, { org, project } = {}){
   try {
     const resp = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${key}`
+  'Authorization': `Bearer ${key}`,
+  ...(org ? { 'OpenAI-Organization': org } : {}),
+  ...(project ? { 'OpenAI-Project': project } : {})
       },
       body: JSON.stringify({
         model,
@@ -65,13 +98,47 @@ async function askOpenAI(key, model, prompt, options) {
         temperature: 0
       })
     });
-    if (!resp.ok) throw new Error('OpenAI API error');
-    const data = await resp.json();
-    let content = data.choices?.[0]?.message?.content?.trim() || '';
-    content = sanitizeToOptions(content, options);
-    return content;
-  } catch (e) {
-    return 'Error: ' + e.message;
+    const text = await resp.text();
+    let data; try { data = JSON.parse(text); } catch {}
+    if(!resp.ok){
+      const apiMsg = data?.error?.message || text || 'Unknown error';
+      return { ok:false, error:`HTTP ${resp.status} ${resp.statusText}: ${apiMsg}` };
+    }
+    const content = data.choices?.[0]?.message?.content?.trim() || '';
+    return { ok:true, content };
+  } catch(err){
+    return { ok:false, error: err.message };
+  }
+}
+
+async function callOpenAIResponses(key, model, prompt, { org, project } = {}){
+  try {
+    const resp = await fetch('https://api.openai.com/v1/responses', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+  'Authorization': `Bearer ${key}`,
+  ...(org ? { 'OpenAI-Organization': org } : {}),
+  ...(project ? { 'OpenAI-Project': project } : {})
+      },
+      body: JSON.stringify({
+        model,
+        input: prompt,
+        temperature: 0
+      })
+    });
+    const text = await resp.text();
+    let data; try { data = JSON.parse(text); } catch {}
+    if(!resp.ok){
+      const apiMsg = data?.error?.message || text || 'Unknown error';
+      return { ok:false, error:`HTTP ${resp.status} ${resp.statusText}: ${apiMsg}` };
+    }
+    const content = (data.output_text ||
+                    data.content?.[0]?.text ||
+                    data.choices?.[0]?.message?.content || '').trim();
+    return { ok:true, content };
+  } catch(err){
+    return { ok:false, error: err.message };
   }
 }
 
